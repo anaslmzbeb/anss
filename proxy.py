@@ -1,32 +1,36 @@
-import asyncio
-from proxybroker import Broker
+import time
+import os
 
-async def main():
-    # Read proxies from file
-    with open('proxy.txt', 'r') as f:
-        lines = [line.strip() for line in f if line.strip()]
-    proxies = []
-    for line in lines:
-        parts = line.split(':')
-        if len(parts) == 2:
-            host, port = parts
-            proxies.append(f'{host}:{port}')
-        elif len(parts) == 4:
-            host, port, user, passwd = parts
-            proxies.append(f'{user}:{passwd}@{host}:{port}')
-        else:
-            continue
+PROXY_FILE = 'proxy.txt'
+ROTATION_INTERVAL = 10  # seconds
 
-    broker = Broker(None)
+def set_system_proxy(ip, port):
+    os.system(f'netsh winhttp set proxy {ip}:{port}')
+    print(f"[+] Proxy set to: {ip}:{port}")
 
-    # Start local proxy server on 127.0.0.1:8888
-    await broker.serve(
-        proxies=proxies,
-        limit=100,
-        addr='127.0.0.1',
-        port=8888,
-        max_conn=100
-    )
+def reset_proxy():
+    os.system('netsh winhttp reset proxy')
+    print("[!] Proxy reset to direct connection.")
+
+def main():
+    with open(PROXY_FILE, 'r') as f:
+        proxies = [line.strip() for line in f if line.strip()]
+
+    if not proxies:
+        print("No proxies found in proxy.txt")
+        return
+
+    index = 0
+    try:
+        while True:
+            proxy = proxies[index % len(proxies)]
+            ip, port = proxy.split(':')
+            set_system_proxy(ip, port)
+            index += 1
+            time.sleep(ROTATION_INTERVAL)
+    except KeyboardInterrupt:
+        reset_proxy()
+        print("Exiting...")
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    main()
